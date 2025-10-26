@@ -1,4 +1,4 @@
-/* 整体容器（使用系统主题变量） */
+/* 继承官方扩展样式变量 */
 #idle_container {
   --idle-border: 1px solid var(--grey-3, #2c2c2c);
   --idle-bg: var(--black-2, #141414);
@@ -9,131 +9,104 @@
   color: var(--idle-text);
   font-size: 13px;
   max-width: 560px;
+  padding: 4px 0;
 }
 
-/* 折叠面板样式 */
-#idle_container details {
-  border: var(--idle-border);
-  border-radius: 8px;
-  background: var(--idle-card-bg);
-  padding: 6px;
-  margin-bottom: 10px;
+/* 块级元素样式 */
+.idle_block {
+  margin: 6px 0;
+  padding: 4px 6px;
 }
 
-#idle_container summary {
-  cursor: pointer;
-  padding: 6px 8px;
-  font-weight: 600;
-  background: var(--idle-bg);
-  border-radius: 6px;
-}
-
-/* 分组容器样式 */
-#idle_container fieldset {
-  border: var(--idle-border);
-  border-radius: 6px;
-  margin: 8px 0;
-  padding: 10px;
-  background: var(--idle-bg);
-}
-
-#idle_container legend {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 0 4px;
-  color: var(--idle-muted);
-}
-
-/* 标签与复选框排版 */
-#idle_container label {
+/* 复选框样式 */
+.checkbox-container {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 4px 8px 4px 0;
+  margin: 4px 0;
   cursor: pointer;
 }
 
-/* 时间点容器 */
-.time-points {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 8px 0;
-  padding-left: 4px;
+.checkbox-container input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent, #6d4aff);
 }
 
-/* 单个时间点控件 */
+/* 详情面板样式 */
+#idle_container details {
+  border: var(--idle-border);
+  border-radius: 6px;
+  margin: 6px 0;
+  background: var(--idle-card-bg);
+}
+
+#idle_container summary {
+  padding: 6px 8px;
+  cursor: pointer;
+  font-weight: 500;
+  background: var(--idle-bg);
+  border-radius: 6px 6px 0 0;
+}
+
+/* 输入框样式 */
+#idle_container input[type="number"],
+#idle_container textarea,
+.time-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  margin: 4px 0;
+  border: var(--idle-border);
+  border-radius: 4px;
+  background: var(--idle-bg);
+  color: var(--idle-text);
+  font-size: 13px;
+}
+
+.time-input {
+  width: 60px;
+  display: inline-block;
+}
+
 .time-point {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  padding: 6px;
-  background: var(--idle-card-bg);
-  border: var(--idle-border);
-  border-radius: 6px;
+  margin: 4px 0;
 }
 
-/* 输入框样式（复用系统主题） */
-#idle_container input[type="number"],
-#idle_container .time-input,
-#idle_container input[type="checkbox"] {
-  box-sizing: border-box;
-  padding: 6px 8px;
-  margin-top: 2px;
-  margin-bottom: 6px;
-  border-radius: 6px;
-  border: var(--idle-border);
-  background: var(--idle-card-bg);
-  color: var(--idle-text);
-  font-size: 13px;
-  outline: none;
-}
-
-.time-input {
-  width: 65px; /* 时间输入框固定宽度 */
-  text-align: center;
-}
-
-/* 按钮样式（贴合系统主题） */
-#idle_container button,
-#idle_container .add-btn,
-#idle_container .delete-btn,
-#idle_container #save-settings {
-  appearance: none;
-  border: var(--idle-border);
+/* 按钮样式 */
+.idle_btn {
   background: var(--idle-bg);
+  border: var(--idle-border);
   color: var(--idle-text);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
-  margin-top: 6px;
+  font-size: 12px;
+  margin: 2px 0;
 }
 
-#idle_container button:hover,
-#idle_container .add-btn:hover,
-#idle_container .delete-btn:hover,
-#idle_container #save-settings:hover {
-  filter: brightness(1.1);
+.idle_btn:hover {
+  filter: brightness(1.15);
 }
 
-/* 说明文字 */
+/* 提示文本 */
 #idle_container small {
   color: var(--idle-muted);
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 11px;
+  margin: 2px 0 4px 0;
   display: block;
-  line-height: 1.4;
 }
 
-/* 下一次发送时间提示 */
+/* 下次发送时间提示 */
 .idle-next-time {
-  margin-top: 6px;
+  margin: 8px 0;
   padding: 6px 8px;
-  background: var(--idle-card-bg);
-  border: var(--idle-border);
-  border-radius: 6px;
   font-size: 12px;
   color: var(--idle-muted);
+  background: var(--idle-card-bg);
+  border: var(--idle-border);
+  border-radius: 4px;
 }
