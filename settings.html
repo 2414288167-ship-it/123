@@ -1,195 +1,175 @@
-<!-- 使用主题容器ID "idle_container" 确保样式生效 -->
 <div id="idle_container">
-  <link rel="stylesheet" href="style.css">
+  <div class="idle_block">
+    <label class="checkbox-container">
+      <input type="checkbox" id="aam_enabled" checked>
+      <span class="checkmark"></span> 启用自动消息
+    </label>
+  </div>
 
   <details>
-    <summary>自动AI消息设置</summary>
-    
-    <fieldset>
-      <legend>基础设置</legend>
-      <label>
-        <input type="checkbox" id="enabled"> 启用自动消息（总开关）
+    <summary>模式设置</summary>
+    <div class="idle_block">
+      <label class="checkbox-container">
+        <input type="checkbox" id="aam_fixed_mode" checked>
+        <span class="checkmark"></span> 定时模式（特定时间点）
       </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>模式选择</legend>
-      <label>
-        <input type="checkbox" id="enableFixedMode" checked> 定时模式（特定时间点）
+      <label class="checkbox-container">
+        <input type="checkbox" id="aam_random_mode">
+        <span class="checkmark"></span> 随机模式
       </label>
-      <label>
-        <input type="checkbox" id="enableRandomMode"> 随机模式
-      </label>
-    </fieldset>
-
-    <!-- 定时模式配置 -->
-    <fieldset id="fixed-mode-settings">
-      <legend>定时模式设置</legend>
-      <label>定时发送时间点（每天）：</label>
-      <div class="time-points" id="time-points-container">
-        <!-- 时间点动态生成 -->
-      </div>
-      <button class="add-btn" id="add-time-point">+ 添加时间点</button>
-      <small>（定时模式启用时，每天在指定时间点发送消息）</small>
-    </fieldset>
-
-    <!-- 随机模式配置 -->
-    <fieldset id="random-mode-settings">
-      <legend>随机模式设置</legend>
-      <label>
-        <span>最小随机间隔（秒）：</span>
-        <input type="number" id="minRandomInterval" min="5" max="300" value="10">
-      </label>
-      <label>
-        <span>最大随机间隔（秒）：</span>
-        <input type="number" id="maxRandomInterval" min="5" max="300" value="60">
-      </label>
-      <small>（随机模式启用时，每X-Y秒内随机发送一次）</small>
-    </fieldset>
-
-    <fieldset>
-      <legend>通用设置</legend>
-      <label>
-        <span>最小消息间隔（秒）：</span>
-        <input type="number" id="minMessageGap" min="3" max="60" value="5">
-      </label>
-      <small>（两次自动消息的最小间隔，防止刷屏）</small>
-
-      <label>
-        <input type="checkbox" id="onlyWhenIdle" checked> 仅当用户空闲时发送
-      </label>
-    </fieldset>
-
-    <button id="save-settings">保存设置</button>
-
-    <!-- 下一次发送时间提示（可选） -->
-    <div class="idle-next-time" id="next-send-time">
-      下一次预计发送时间：未设置
     </div>
   </details>
+
+  <details id="fixed_mode_settings">
+    <summary>定时模式配置</summary>
+    <div class="idle_block">
+      <label>每日发送时间点：</label>
+      <div class="time-points" id="time_points_container"></div>
+      <button class="idle_btn" id="add_time_point">+ 添加时间点</button>
+      <small>格式：小时（0-23）:分钟（0-59）</small>
+    </div>
+  </details>
+
+  <details id="random_mode_settings">
+    <summary>随机模式配置</summary>
+    <div class="idle_block">
+      <label for="aam_min_random">最小间隔（秒）：</label>
+      <input type="number" id="aam_min_random" min="5" max="300" value="10">
+      
+      <label for="aam_max_random">最大间隔（秒）：</label>
+      <input type="number" id="aam_max_random" min="5" max="300" value="60">
+    </div>
+  </details>
+
+  <details>
+    <summary>通用设置</summary>
+    <div class="idle_block">
+      <label for="aam_min_gap">最小消息间隔（秒）：</label>
+      <input type="number" id="aam_min_gap" min="3" max="60" value="5">
+      
+      <label class="checkbox-container">
+        <input type="checkbox" id="aam_only_idle" checked>
+        <span class="checkmark"></span> 仅当用户闲置时发送
+      </label>
+    </div>
+  </details>
+
+  <details>
+    <summary>提示词设置</summary>
+    <div class="idle_block">
+      <label for="aam_prompts">自动消息提示词（每行一个）：</label>
+      <textarea id="aam_prompts" rows="4">基于之前的对话，自然地继续交流吧。
+有什么想聊的吗？我很乐意继续。
+接着刚才的话题，你觉得呢？</textarea>
+      <small>AI会随机选择一个提示词生成回复</small>
+    </div>
+  </details>
+
+  <div class="idle_block">
+    <button class="idle_btn" id="save_aam_settings">保存设置</button>
+  </div>
+
+  <div class="idle-next-time" id="next_send_time">
+    下一次预计发送时间：计算中...
+  </div>
 </div>
 
 <script>
-  // 加载配置
-  const config = window.extensions.getStorage("auto-ai-message-config") || {
-    enabled: true,
-    enableFixedMode: true,
-    enableRandomMode: false,
-    fixedTimes: [{ hour: 8, minute: 30 }, { hour: 18, minute: 0 }],
-    minRandomInterval: 10,
-    maxRandomInterval: 60,
-    minMessageGap: 5,
-    onlyWhenIdle: true
-  };
+  // 加载配置到UI
+  function populateUI() {
+    const settings = window.autoAiMessage.getSettings();
+    
+    document.getElementById("aam_enabled").checked = settings.enabled;
+    document.getElementById("aam_fixed_mode").checked = settings.enableFixedMode;
+    document.getElementById("aam_random_mode").checked = settings.enableRandomMode;
+    document.getElementById("aam_min_random").value = settings.minRandomInterval;
+    document.getElementById("aam_max_random").value = settings.maxRandomInterval;
+    document.getElementById("aam_min_gap").value = settings.minMessageGap;
+    document.getElementById("aam_only_idle").checked = settings.onlyWhenIdle;
+    document.getElementById("aam_prompts").value = settings.prompts.join('\n');
+    
+    renderTimePoints(settings.fixedTimes);
+    updateNextSendTime();
+  }
 
-  // 填充基础配置
-  document.getElementById("enabled").checked = config.enabled;
-  document.getElementById("enableFixedMode").checked = config.enableFixedMode;
-  document.getElementById("enableRandomMode").checked = config.enableRandomMode;
-  document.getElementById("minRandomInterval").value = config.minRandomInterval;
-  document.getElementById("maxRandomInterval").value = config.maxRandomInterval;
-  document.getElementById("minMessageGap").value = config.minMessageGap;
-  document.getElementById("onlyWhenIdle").checked = config.onlyWhenIdle;
-
-  // 时间点容器
-  const timePointsContainer = document.getElementById("time-points-container");
-
-  // 生成时间点输入框
-  function renderTimePoints() {
-    timePointsContainer.innerHTML = "";
-    config.fixedTimes.forEach((time, index) => {
-      const timePointEl = document.createElement("div");
-      timePointEl.className = "time-point";
-      timePointEl.innerHTML = `
-        <input type="number" class="time-input hour-input" min="0" max="23" value="${time.hour}" placeholder="时">
+  // 渲染时间点
+  function renderTimePoints(times) {
+    const container = document.getElementById("time_points_container");
+    container.innerHTML = "";
+    
+    times.forEach((time, index) => {
+      const div = document.createElement("div");
+      div.className = "time-point";
+      div.innerHTML = `
+        <input type="number" class="time-input hour" min="0" max="23" value="${time.hour}">
         <span>:</span>
-        <input type="number" class="time-input minute-input" min="0" max="59" value="${time.minute}" placeholder="分">
-        <button class="delete-btn" data-index="${index}">删除</button>
+        <input type="number" class="time-input minute" min="0" max="59" value="${time.minute}">
+        <button class="idle_btn delete-time" data-index="${index}">删除</button>
       `;
-      timePointsContainer.appendChild(timePointEl);
+      container.appendChild(div);
     });
-
+    
     // 绑定删除事件
-    document.querySelectorAll(".delete-btn").forEach(btn => {
+    document.querySelectorAll(".delete-time").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const index = parseInt(e.target.dataset.index);
-        config.fixedTimes.splice(index, 1);
-        renderTimePoints();
-        updateNextSendTime(); // 更新下次发送时间提示
+        const settings = window.autoAiMessage.getSettings();
+        settings.fixedTimes.splice(index, 1);
+        renderTimePoints(settings.fixedTimes);
       });
     });
   }
 
-  // 添加新时间点
-  document.getElementById("add-time-point").addEventListener("click", () => {
-    config.fixedTimes.push({ hour: 12, minute: 0 }); // 默认12:00
-    renderTimePoints();
-    updateNextSendTime(); // 更新下次发送时间提示
+  // 添加时间点
+  document.getElementById("add_time_point").addEventListener("click", () => {
+    const settings = window.autoAiMessage.getSettings();
+    settings.fixedTimes.push({ hour: 12, minute: 0 });
+    renderTimePoints(settings.fixedTimes);
   });
 
-  // 计算并更新下一次发送时间提示
+  // 更新下次发送时间提示
   function updateNextSendTime() {
-    const nextTimeEl = document.getElementById("next-send-time");
-    if (!config.enabled || (!config.enableFixedMode && !config.enableRandomMode)) {
-      nextTimeEl.textContent = "下一次预计发送时间：未启用";
-      return;
-    }
-
-    // 简单计算下次时间（实际逻辑可复用main.js中的getNextFixedTime）
-    nextTimeEl.textContent = "下一次预计发送时间：计算中...";
-    // 此处可根据实际模式计算并更新，示例略
+    // 简化实现，实际可复用index.js中的计算逻辑
+    document.getElementById("next_send_time").textContent = "下一次预计发送时间：计算中...";
   }
 
-  // 初始化渲染
-  renderTimePoints();
-  updateNextSendTime();
-
   // 保存设置
-  document.getElementById("save-settings").addEventListener("click", () => {
-    // 收集时间点数据
+  document.getElementById("save_aam_settings").addEventListener("click", () => {
+    const settings = window.autoAiMessage.getSettings();
+    
+    // 收集UI配置
+    settings.enabled = document.getElementById("aam_enabled").checked;
+    settings.enableFixedMode = document.getElementById("aam_fixed_mode").checked;
+    settings.enableRandomMode = document.getElementById("aam_random_mode").checked;
+    settings.minRandomInterval = parseInt(document.getElementById("aam_min_random").value);
+    settings.maxRandomInterval = parseInt(document.getElementById("aam_max_random").value);
+    settings.minMessageGap = parseInt(document.getElementById("aam_min_gap").value);
+    settings.onlyWhenIdle = document.getElementById("aam_only_idle").checked;
+    settings.prompts = document.getElementById("aam_prompts").value.split('\n').filter(p => p.trim());
+    
+    // 收集时间点
     const timeInputs = document.querySelectorAll(".time-point");
-    const fixedTimes = Array.from(timeInputs).map(el => {
-      const hour = parseInt(el.querySelector(".hour-input").value) || 0;
-      const minute = parseInt(el.querySelector(".minute-input").value) || 0;
-      return { 
-        hour: Math.min(23, Math.max(0, hour)),
-        minute: Math.min(59, Math.max(0, minute))
-      };
-    });
-
-    const newConfig = {
-      enabled: document.getElementById("enabled").checked,
-      enableFixedMode: document.getElementById("enableFixedMode").checked,
-      enableRandomMode: document.getElementById("enableRandomMode").checked,
-      fixedTimes: fixedTimes.filter(time => !(time.hour === 0 && time.minute === 0)),
-      minRandomInterval: parseInt(document.getElementById("minRandomInterval").value),
-      maxRandomInterval: parseInt(document.getElementById("maxRandomInterval").value),
-      minMessageGap: parseInt(document.getElementById("minMessageGap").value),
-      onlyWhenIdle: document.getElementById("onlyWhenIdle").checked
-    };
-
+    settings.fixedTimes = Array.from(timeInputs).map(el => ({
+      hour: parseInt(el.querySelector(".hour").value) || 0,
+      minute: parseInt(el.querySelector(".minute").value) || 0
+    }));
+    
     // 验证配置
-    if (newConfig.enabled) {
-      if (!newConfig.enableFixedMode && !newConfig.enableRandomMode) {
-        alert("错误：总开关已启用，但未勾选任何模式");
-        return;
-      }
-      if (newConfig.enableFixedMode && newConfig.fixedTimes.length === 0) {
-        alert("错误：定时模式已启用，但未设置任何时间点");
-        return;
-      }
-    }
-    if (newConfig.enableRandomMode && newConfig.minRandomInterval > newConfig.maxRandomInterval) {
-      alert("错误：随机模式的最小间隔不能大于最大间隔");
+    if (settings.enabled && !settings.enableFixedMode && !settings.enableRandomMode) {
+      alert("请至少启用一种模式");
       return;
     }
-    if (newConfig.minMessageGap < 3) {
-      alert("错误：最小消息间隔不能小于3秒");
+    if (settings.enableRandomMode && settings.minRandomInterval > settings.maxRandomInterval) {
+      alert("最小间隔不能大于最大间隔");
       return;
     }
-
-    window.extensions.getExtension("auto-ai-message").onSettingsSave(newConfig);
+    
+    // 同步到扩展
+    window.autoAiMessage.updateFromUI();
     alert("设置已保存");
-    updateNextSendTime(); // 保存后更新提示
+    updateNextSendTime();
   });
+
+  // 初始化UI
+  populateUI();
 </script>
