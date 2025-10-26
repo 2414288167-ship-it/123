@@ -1,63 +1,72 @@
-<div class="auto-ai-message-settings">
-  <!-- 引入外部样式表 -->
+<!-- 使用主题容器ID "idle_container" 确保样式生效 -->
+<div id="idle_container">
   <link rel="stylesheet" href="style.css">
 
-  <h3>自动AI消息设置</h3>
-  
-  <div class="setting-item">
-    <label>
-      <input type="checkbox" id="enabled"> 启用自动消息（总开关）
-    </label>
-  </div>
-  
-  <div class="setting-item">
-    <label>启用模式：</label>
-    <label>
-      <input type="checkbox" id="enableFixedMode" checked> 定时模式（特定时间点）
-    </label>
-    <label>
-      <input type="checkbox" id="enableRandomMode"> 随机模式
-    </label>
-  </div>
-  
-  <!-- 定时模式配置 -->
-  <div id="fixed-mode-settings" class="setting-item">
-    <label>定时发送时间点（每天）：</label>
-    <div class="time-points" id="time-points-container">
-      <!-- 时间点动态生成 -->
+  <details>
+    <summary>自动AI消息设置</summary>
+    
+    <fieldset>
+      <legend>基础设置</legend>
+      <label>
+        <input type="checkbox" id="enabled"> 启用自动消息（总开关）
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>模式选择</legend>
+      <label>
+        <input type="checkbox" id="enableFixedMode" checked> 定时模式（特定时间点）
+      </label>
+      <label>
+        <input type="checkbox" id="enableRandomMode"> 随机模式
+      </label>
+    </fieldset>
+
+    <!-- 定时模式配置 -->
+    <fieldset id="fixed-mode-settings">
+      <legend>定时模式设置</legend>
+      <label>定时发送时间点（每天）：</label>
+      <div class="time-points" id="time-points-container">
+        <!-- 时间点动态生成 -->
+      </div>
+      <button class="add-btn" id="add-time-point">+ 添加时间点</button>
+      <small>（定时模式启用时，每天在指定时间点发送消息）</small>
+    </fieldset>
+
+    <!-- 随机模式配置 -->
+    <fieldset id="random-mode-settings">
+      <legend>随机模式设置</legend>
+      <label>
+        <span>最小随机间隔（秒）：</span>
+        <input type="number" id="minRandomInterval" min="5" max="300" value="10">
+      </label>
+      <label>
+        <span>最大随机间隔（秒）：</span>
+        <input type="number" id="maxRandomInterval" min="5" max="300" value="60">
+      </label>
+      <small>（随机模式启用时，每X-Y秒内随机发送一次）</small>
+    </fieldset>
+
+    <fieldset>
+      <legend>通用设置</legend>
+      <label>
+        <span>最小消息间隔（秒）：</span>
+        <input type="number" id="minMessageGap" min="3" max="60" value="5">
+      </label>
+      <small>（两次自动消息的最小间隔，防止刷屏）</small>
+
+      <label>
+        <input type="checkbox" id="onlyWhenIdle" checked> 仅当用户空闲时发送
+      </label>
+    </fieldset>
+
+    <button id="save-settings">保存设置</button>
+
+    <!-- 下一次发送时间提示（可选） -->
+    <div class="idle-next-time" id="next-send-time">
+      下一次预计发送时间：未设置
     </div>
-    <button class="add-btn" id="add-time-point">+ 添加时间点</button>
-    <small>（定时模式启用时，每天在指定时间点发送消息）</small>
-  </div>
-  
-  <!-- 随机模式配置 -->
-  <div id="random-mode-settings" class="setting-item">
-    <label>
-      <span>最小随机间隔（秒）：</span>
-      <input type="number" id="minRandomInterval" min="5" max="300" value="10">
-    </label>
-    <label>
-      <span>最大随机间隔（秒）：</span>
-      <input type="number" id="maxRandomInterval" min="5" max="300" value="60">
-    </label>
-    <small>（随机模式启用时，每X-Y秒内随机发送一次）</small>
-  </div>
-  
-  <div class="setting-item">
-    <label>
-      <span>最小消息间隔（秒）：</span>
-      <input type="number" id="minMessageGap" min="3" max="60" value="5">
-    </label>
-    <small>（两次自动消息的最小间隔，防止刷屏）</small>
-  </div>
-  
-  <div class="setting-item">
-    <label>
-      <input type="checkbox" id="onlyWhenIdle" checked> 仅当用户空闲时发送
-    </label>
-  </div>
-  
-  <button id="save-settings">保存设置</button>
+  </details>
 </div>
 
 <script>
@@ -106,6 +115,7 @@
         const index = parseInt(e.target.dataset.index);
         config.fixedTimes.splice(index, 1);
         renderTimePoints();
+        updateNextSendTime(); // 更新下次发送时间提示
       });
     });
   }
@@ -114,10 +124,25 @@
   document.getElementById("add-time-point").addEventListener("click", () => {
     config.fixedTimes.push({ hour: 12, minute: 0 }); // 默认12:00
     renderTimePoints();
+    updateNextSendTime(); // 更新下次发送时间提示
   });
 
-  // 初始化渲染时间点
+  // 计算并更新下一次发送时间提示
+  function updateNextSendTime() {
+    const nextTimeEl = document.getElementById("next-send-time");
+    if (!config.enabled || (!config.enableFixedMode && !config.enableRandomMode)) {
+      nextTimeEl.textContent = "下一次预计发送时间：未启用";
+      return;
+    }
+
+    // 简单计算下次时间（实际逻辑可复用main.js中的getNextFixedTime）
+    nextTimeEl.textContent = "下一次预计发送时间：计算中...";
+    // 此处可根据实际模式计算并更新，示例略
+  }
+
+  // 初始化渲染
   renderTimePoints();
+  updateNextSendTime();
 
   // 保存设置
   document.getElementById("save-settings").addEventListener("click", () => {
@@ -165,10 +190,6 @@
 
     window.extensions.getExtension("auto-ai-message").onSettingsSave(newConfig);
     alert("设置已保存");
-  });
-</script>
-
-    window.extensions.getExtension("auto-ai-message").onSettingsSave(newConfig);
-    alert("设置已保存");
+    updateNextSendTime(); // 保存后更新提示
   });
 </script>
