@@ -1,0 +1,19 @@
+{
+  "id": "auto-ai-message",
+  "name": "Auto AI Message Sender",
+  "version": "1.2.0",
+  "description": "让AI支持定时（特定时间点）和随机主动发送消息的扩展插件",
+  "author": "Your Name",
+  "main": "main.js",
+  "settings": "settings.html",
+  "permissions": [
+    "conversations",
+    "ai",
+    "ui",
+    "storage"
+  ],
+  "compatibility": {
+    "minimum": "1.10.0",
+    "tested": "1.12.0"
+  }
+}
