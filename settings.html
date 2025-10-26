@@ -1,0 +1,253 @@
+<div class="auto-ai-message-settings">
+  <style>
+    /* 响应式样式（适配手机和桌面） */
+    .auto-ai-message-settings {
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    .setting-item {
+      margin-bottom: 15px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .setting-item label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .time-points {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .time-point {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .time-input {
+      width: 60px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .delete-btn {
+      padding: 4px 8px;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .add-btn {
+      padding: 6px 12px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    input[type="number"] {
+      width: 100px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
+    button#save-settings {
+      width: 100%;
+      padding: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button#save-settings:hover {
+      background: #45a049;
+    }
+    small {
+      color: #666;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  </style>
+
+  <h3>自动AI消息设置</h3>
+  
+  <div class="setting-item">
+    <label>
+      <input type="checkbox" id="enabled"> 启用自动消息（总开关）
+    </label>
+  </div>
+  
+  <div class="setting-item">
+    <label>启用模式：</label>
+    <label>
+      <input type="checkbox" id="enableFixedMode" checked> 定时模式（特定时间点）
+    </label>
+    <label>
+      <input type="checkbox" id="enableRandomMode"> 随机模式
+    </label>
+  </div>
+  
+  <!-- 定时模式配置（时间点设置） -->
+  <div id="fixed-mode-settings" class="setting-item">
+    <label>定时发送时间点（每天）：</label>
+    <div class="time-points" id="time-points-container">
+      <!-- 时间点会动态生成 -->
+    </div>
+    <button class="add-btn" id="add-time-point">+ 添加时间点</button>
+    <small>（定时模式启用时，每天在指定时间点发送消息）</small>
+  </div>
+  
+  <!-- 随机模式配置（保持不变） -->
+  <div id="random-mode-settings" class="setting-item">
+    <label>
+      <span>最小随机间隔（秒）：</span>
+      <input type="number" id="minRandomInterval" min="5" max="300" value="10">
+    </label>
+    <label>
+      <span>最大随机间隔（秒）：</span>
+      <input type="number" id="maxRandomInterval" min="5" max="300" value="60">
+    </label>
+    <small>（随机模式启用时，每X-Y秒内随机发送一次）</small>
+  </div>
+  
+  <div class="setting-item">
+    <label>
+      <span>最小消息间隔（秒）：</span>
+      <input type="number" id="minMessageGap" min="3" max="60" value="5">
+    </label>
+    <small>（两次自动消息的最小间隔，防止刷屏）</small>
+  </div>
+  
+  <div class="setting-item">
+    <label>
+      <input type="checkbox" id="onlyWhenIdle" checked> 仅当用户空闲时发送
+    </label>
+  </div>
+  
+  <button id="save-settings">保存设置</button>
+</div>
+
+<script>
+  // 加载配置
+  const config = window.extensions.getStorage("auto-ai-message-config") || {
+    enabled: true,
+    enableFixedMode: true,
+    enableRandomMode: false,
+    fixedTimes: [{ hour: 8, minute: 30 }, { hour: 18, minute: 0 }],
+    minRandomInterval: 10,
+    maxRandomInterval: 60,
+    minMessageGap: 5,
+    onlyWhenIdle: true
+  };
+
+  // 填充基础配置
+  document.getElementById("enabled").checked = config.enabled;
+  document.getElementById("enableFixedMode").checked = config.enableFixedMode;
+  document.getElementById("enableRandomMode").checked = config.enableRandomMode;
+  document.getElementById("minRandomInterval").value = config.minRandomInterval;
+  document.getElementById("maxRandomInterval").value = config.maxRandomInterval;
+  document.getElementById("minMessageGap").value = config.minMessageGap;
+  document.getElementById("onlyWhenIdle").checked = config.onlyWhenIdle;
+
+  // 时间点容器
+  const timePointsContainer = document.getElementById("time-points-container");
+
+  // 生成时间点输入框
+  function renderTimePoints() {
+    timePointsContainer.innerHTML = ""; // 清空现有内容
+    config.fixedTimes.forEach((time, index) => {
+      const timePointEl = document.createElement("div");
+      timePointEl.className = "time-point";
+      timePointEl.innerHTML = `
+        <input type="number" class="time-input hour-input" min="0" max="23" value="${time.hour}" placeholder="时">
+        <span>:</span>
+        <input type="number" class="time-input minute-input" min="0" max="59" value="${time.minute}" placeholder="分">
+        <button class="delete-btn" data-index="${index}">删除</button>
+      `;
+      timePointsContainer.appendChild(timePointEl);
+    });
+
+    // 绑定删除按钮事件
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = parseInt(e.target.dataset.index);
+        config.fixedTimes.splice(index, 1); // 从数组中删除
+        renderTimePoints(); // 重新渲染
+      });
+    });
+  }
+
+  // 添加新时间点
+  document.getElementById("add-time-point").addEventListener("click", () => {
+    config.fixedTimes.push({ hour: 12, minute: 0 }); // 默认添加12:00
+    renderTimePoints();
+  });
+
+  // 初始化渲染时间点
+  renderTimePoints();
+
+  // 保存设置
+  document.getElementById("save-settings").addEventListener("click", () => {
+    // 收集时间点数据
+    const timeInputs = document.querySelectorAll(".time-point");
+    const fixedTimes = Array.from(timeInputs).map(el => {
+      const hour = parseInt(el.querySelector(".hour-input").value) || 0;
+      const minute = parseInt(el.querySelector(".minute-input").value) || 0;
+      return { 
+        hour: Math.min(23, Math.max(0, hour)), // 限制在0-23
+        minute: Math.min(59, Math.max(0, minute)) // 限制在0-59
+      };
+    });
+
+    const newConfig = {
+      enabled: document.getElementById("enabled").checked,
+      enableFixedMode: document.getElementById("enableFixedMode").checked,
+      enableRandomMode: document.getElementById("enableRandomMode").checked,
+      fixedTimes: fixedTimes.filter(time => !(time.hour === 0 && time.minute === 0)), // 过滤无效时间
+      minRandomInterval: parseInt(document.getElementById("minRandomInterval").value),
+      maxRandomInterval: parseInt(document.getElementById("maxRandomInterval").value),
+      minMessageGap: parseInt(document.getElementById("minMessageGap").value),
+      onlyWhenIdle: document.getElementById("onlyWhenIdle").checked
+    };
+
+    // 验证配置
+    if (newConfig.enabled) {
+      if (!newConfig.enableFixedMode && !newConfig.enableRandomMode) {
+        alert("错误：总开关已启用，但未勾选任何模式");
+        return;
+      }
+      if (newConfig.enableFixedMode && newConfig.fixedTimes.length === 0) {
+        alert("错误：定时模式已启用，但未设置任何时间点");
+        return;
+      }
+    }
+    if (newConfig.enableRandomMode && newConfig.minRandomInterval > newConfig.maxRandomInterval) {
+      alert("错误：随机模式的最小间隔不能大于最大间隔");
+      return;
+    }
+    if (newConfig.minMessageGap < 3) {
+      alert("错误：最小消息间隔不能小于3秒");
+      return;
+    }
+
+    window.extensions.getExtension("auto-ai-message").onSettingsSave(newConfig);
+    alert("设置已保存");
+  });
+</script>
