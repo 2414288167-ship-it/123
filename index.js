@@ -1,11 +1,11 @@
 import {
     saveSettingsDebounced,
     substituteParams,
-} from '../../../../script.js';
-import { debounce } from '../../../utils.js';
-import { promptQuietForLoudResponse, sendMessageAs, sendNarratorMessage } from '../../../slash-commands.js';
-import { extension_settings, getContext, renderExtensionTemplateAsync } from '../../../extensions.js';
-import { registerSlashCommand } from '../../../slash-commands.js';
+} from '../../../../../script.js';  // 向上5级：123123 → third-party → extensions → scripts → 找到script.js
+import { debounce } from '../../../../utils.js';  // 向上4级：123123 → third-party → extensions → scripts → 找到utils.js
+import { promptQuietForLoudResponse, sendMessageAs, sendNarratorMessage } from '../../../../slash-commands.js';
+import { extension_settings, getContext, renderExtensionTemplateAsync } from '../../../../extensions.js';
+import { registerSlashCommand } from '../../../../slash-commands.js';
 
 
 // 扩展配置（遵循官方扩展变量规范）
