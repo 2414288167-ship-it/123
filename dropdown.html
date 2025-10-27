@@ -1,398 +1,284 @@
 <div id="123123_container">
-  <!-- 基础开关 -->
-  <div class="auto_block">
-    <label class="checkbox-container">
-      <input type="checkbox" id="123123_enabled" checked>
-      <span class="checkmark"></span> 启用自动消息
-    </label>
-  </div>
-
-  <!-- 模式选择 -->
-  <div class="auto_block">
-    <label>触发模式：</label>
-    <div class="sub_block">
-      <label class="checkbox-container">
-        <input type="checkbox" id="123123_mode_idle" checked>
-        <span class="checkmark"></span> 闲置触发
-      </label>
-      <label class="checkbox-container">
-        <input type="checkbox" id="123123_mode_fixed">
-        <span class="checkmark"></span> 定时触发（每日固定时间）
-      </label>
-      <label class="checkbox-container">
-        <input type="checkbox" id="123123_mode_interval">
-        <span class="checkmark"></span> 间隔触发（随机时间）
-      </label>
+    <!-- 基础开关 -->
+    <div class="auto_block">
+        <label class="checkbox-container">
+            <input type="checkbox" id="123123_enabled" checked>
+            <span class="checkmark"></span> 启用自动消息
+        </label>
     </div>
-  </div>
 
-  <!-- 闲置模式配置 -->
-  <div class="auto_block" id="123123_idle_settings">
-    <label for="123123_timer">闲置时间（秒）：</label>
-    <input type="number" id="123123_timer" min="10" value="300">
-    
-    <label class="checkbox-container">
-      <input type="checkbox" id="123123_random">
-      <span class="checkmark"></span> 随机波动（±30%）
-    </label>
-  </div>
+    <!-- 模式选择 -->
+    <div class="auto_block">
+        <label>触发模式：</label>
+        <div class="sub_block">
+            <label class="checkbox-container">
+                <input type="checkbox" id="123123_mode_idle" checked>
+                <span class="checkmark"></span> 闲置触发
+            </label>
+            <label class="checkbox-container">
+                <input type="checkbox" id="123123_mode_fixed">
+                <span class="checkmark"></span> 定时触发（每日固定时间）
+            </label>
+            <label class="checkbox-container">
+                <input type="checkbox" id="123123_mode_interval">
+                <span class="checkmark"></span> 间隔触发（随机时间）
+            </label>
+        </div>
+    </div>
 
-  <!-- 定时模式配置 -->
-  <div class="auto_block" id="123123_fixed_settings" style="display: none;">
-    <label>每日发送时间点：</label>
-    <div class="time_points" id="123123_fixed_time_points"></div>
-    <button class="auto_btn" id="123123_add_fixed_time">+ 添加时间点</button>
-    <small>格式：小时（0-23）:分钟（0-59）</small>
-  </div>
+    <!-- 闲置模式配置 -->
+    <div class="auto_block" id="123123_idle_settings">
+        <label for="123123_timer">闲置时间（秒）：</label>
+        <input type="number" id="123123_timer" min="10" value="300">
+        
+        <label class="checkbox-container">
+            <input type="checkbox" id="123123_random">
+            <span class="checkmark"></span> 随机波动（±30%）
+        </label>
+    </div>
 
-  <!-- 间隔模式配置 -->
-  <div class="auto_block" id="123123_interval_settings" style="display: none;">
-    <label for="123123_interval_min">最小间隔（秒）：</label>
-    <input type="number" id="123123_interval_min" min="10" value="60">
-    
-    <label for="123123_interval_max">最大间隔（秒）：</label>
-    <input type="number" id="123123_interval_max" min="10" value="300">
-  </div>
+    <!-- 定时模式配置 -->
+    <div class="auto_block" id="123123_fixed_settings" style="display: none;">
+        <label>每日发送时间点：</label>
+        <div class="time_points" id="123123_fixed_time_points"></div>
+        <button class="auto_btn" id="123123_add_fixed_time">+ 添加时间点</button>
+        <small>格式：小时（0-23）:分钟（0-59）</small>
+    </div>
 
-  <!-- 通用配置 -->
-  <div class="auto_block">
-    <label for="123123_max_uses">最大触发次数（0=无限制）：</label>
-    <input type="number" id="123123_max_uses" min="0" value="5">
-    
-    <label for="123123_prompts">提示词（每行一个）：</label>
-    <textarea id="123123_prompts" rows="3">我们继续聊刚才的话题吧？
+    <!-- 间隔模式配置 -->
+    <div class="auto_block" id="123123_interval_settings" style="display: none;">
+        <label for="123123_interval_min">最小间隔（秒）：</label>
+        <input type="number" id="123123_interval_min" min="10" value="60">
+        
+        <label for="123123_interval_max">最大间隔（秒）：</label>
+        <input type="number" id="123123_interval_max" min="10" value="300">
+    </div>
+
+    <!-- 通用配置 -->
+    <div class="auto_block">
+        <label for="123123_prompts">提示词（每行一个）：</label>
+        <textarea id="123123_prompts" rows="3">我们继续聊刚才的话题吧？
 有什么新想法吗？
 你觉得接下来会发生什么？</textarea>
-  </div>
+    </div>
 
-  <!-- 保存按钮 -->
-  <div class="auto_block">
-    <button class="auto_btn" id="123123_save_settings">保存设置</button>
-  </div>
+    <!-- 保存按钮 -->
+    <div class="auto_block">
+        <button class="auto_btn" id="123123_save_settings">保存设置</button>
+    </div>
 </div>
 
+<style>
+.auto_block {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.sub_block {
+    margin-left: 20px;
+}
+
+.checkbox-container {
+    display: block;
+    margin: 5px 0;
+}
+
+.time_points {
+    margin: 10px 0;
+}
+
+.time_point {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.time_input {
+    width: 50px;
+    margin: 0 5px;
+}
+
+.auto_btn {
+    margin: 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.auto_btn:hover {
+    background: #45a049;
+}
+
+.delete_time {
+    background: #f44336;
+}
+
+.delete_time:hover {
+    background: #da190b;
+}
+</style>
+
 <script>
-  // 初始化：从扩展实例加载数据到UI（关键修改：通过扩展ID获取配置）
-  function populateUIFromSettings() {
-    // 通过扩展ID获取官方注册的扩展实例
-    const extension = window.extensions?.getExtension("123123");
-    // 从扩展实例获取配置（兼容未加载状态，提供默认值）
-    const settings = extension?.getSettings() || {
-      enabled: true,
-      idleTimer: 300,
-      random: false,
-      maxUses: 5,
-      prompts: [
-        "我们继续聊刚才的话题吧？",
-        "有什么新想法吗？",
-        "你觉得接下来会发生什么？"
-      ],
-      enableFixedMode: false,
-      enableRandomMode: false,
-      fixedTimes: [],
-      minRandomInterval: 60,
-      maxRandomInterval: 300
-    };
+    // 初始化：从扩展实例加载数据到UI
+    function populateUIFromSettings() {
+        const extension = window.extensions?.getExtension("123123");
+        const settings = extension?.getSettings() || {
+            enabled: true,
+            enableFixedMode: false,
+            enableRandomMode: false,
+            fixedTimes: [],
+            minRandomInterval: 60,
+            maxRandomInterval: 300,
+            prompts: [
+                "我们继续聊刚才的话题吧？",
+                "有什么新想法吗？",
+                "你觉得接下来会发生什么？"
+            ]
+        };
 
-    // 基础开关
-    document.getElementById("123123_enabled").checked = settings.enabled;
+        // 基础开关
+        document.getElementById("123123_enabled").checked = settings.enabled;
 
-    // 模式选择（确保互斥：只能选一种模式）
-    document.getElementById("123123_mode_idle").checked = !settings.enableFixedMode && !settings.enableRandomMode;
-    document.getElementById("123123_mode_fixed").checked = settings.enableFixedMode;
-    document.getElementById("123123_mode_interval").checked = settings.enableRandomMode;
+        // 模式选择
+        document.getElementById("123123_mode_fixed").checked = settings.enableFixedMode;
+        document.getElementById("123123_mode_interval").checked = settings.enableRandomMode;
 
-    // 闲置模式配置
-    document.getElementById("123123_timer").value = settings.idleTimer;
-    document.getElementById("123123_random").checked = settings.random;
+        // 间隔模式配置
+        document.getElementById("123123_interval_min").value = settings.minRandomInterval;
+        document.getElementById("123123_interval_max").value = settings.maxRandomInterval;
 
-    // 通用配置
-    document.getElementById("123123_max_uses").value = settings.maxUses;
-    document.getElementById("123123_prompts").value = settings.prompts?.join("\n") || "";
+        // 提示词
+        document.getElementById("123123_prompts").value = settings.prompts?.join("\n") || "";
 
-    // 定时模式配置：渲染时间点
-    renderFixedTimePoints(settings.fixedTimes || []);
+        // 渲染定时时间点
+        renderFixedTimePoints(settings.fixedTimes || []);
 
-    // 间隔模式配置
-    document.getElementById("123123_interval_min").value = settings.minRandomInterval;
-    document.getElementById("123123_interval_max").value = settings.maxRandomInterval;
-
-    // 初始化时显示/隐藏对应配置块
-    toggleSettingsVisibility();
-  }
-
-  // 渲染定时时间点列表
-  function renderFixedTimePoints(times) {
-    const container = document.getElementById("123123_fixed_time_points");
-    container.innerHTML = ""; // 清空现有内容
-
-    // 无时间点时显示提示
-    if (times.length === 0) {
-      container.innerHTML = '<div class="empty-hint">暂无时间点，点击"添加时间点"创建</div>';
-      return;
+        // 更新UI显示状态
+        toggleSettingsVisibility();
     }
 
-    // 循环渲染时间点输入框
-    times.forEach((time, index) => {
-      const timeEl = document.createElement("div");
-      timeEl.className = "time_point";
-      timeEl.innerHTML = `
-        <input type="number" class="time_input hour" min="0" max="23" value="${time.hour || 0}">
-        <span>:</span>
-        <input type="number" class="time_input minute" min="0" max="59" value="${time.minute || 0}">
-        <button class="auto_btn delete_time" data-index="${index}">删除</button>
-      `;
-      container.appendChild(timeEl);
+    // 渲染定时时间点列表
+    function renderFixedTimePoints(times) {
+        const container = document.getElementById("123123_fixed_time_points");
+        container.innerHTML = "";
+
+        times.forEach((time, index) => {
+            const timeEl = document.createElement("div");
+            timeEl.className = "time_point";
+            timeEl.innerHTML = `
+                <input type="number" class="time_input hour" min="0" max="23" value="${time.hour || 0}">
+                <span>:</span>
+                <input type="number" class="time_input minute" min="0" max="59" value="${time.minute || 0}">
+                <button class="auto_btn delete_time" data-index="${index}">删除</button>
+            `;
+            container.appendChild(timeEl);
+        });
+
+        // 绑定删除按钮事件
+        document.querySelectorAll(".delete_time").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const extension = window.extensions.getExtension("123123");
+                if (extension) {
+                    const settings = extension.getSettings();
+                    settings.fixedTimes.splice(e.target.dataset.index, 1);
+                    renderFixedTimePoints(settings.fixedTimes);
+                }
+            });
+        });
+    }
+
+    // 切换配置块显示/隐藏
+    function toggleSettingsVisibility() {
+        const fixedMode = document.getElementById("123123_mode_fixed").checked;
+        const intervalMode = document.getElementById("123123_mode_interval").checked;
+
+        document.getElementById("123123_fixed_settings").style.display = 
+            fixedMode ? "block" : "none";
+        document.getElementById("123123_interval_settings").style.display = 
+            intervalMode ? "block" : "none";
+    }
+
+    // 初始化事件监听
+    function initializeEventListeners() {
+        // 模式切换
+        document.getElementById("123123_mode_fixed").addEventListener("change", toggleSettingsVisibility);
+        document.getElementById("123123_mode_interval").addEventListener("change", toggleSettingsVisibility);
+
+        // 添加时间点
+        document.getElementById("123123_add_fixed_time").addEventListener("click", () => {
+            const extension = window.extensions.getExtension("123123");
+            if (extension) {
+                const settings = extension.getSettings();
+                settings.fixedTimes = settings.fixedTimes || [];
+                settings.fixedTimes.push({ hour: 12, minute: 0 });
+                renderFixedTimePoints(settings.fixedTimes);
+            }
+        });
+
+        // 保存设置
+        document.getElementById("123123_save_settings").addEventListener("click", () => {
+            const extension = window.extensions.getExtension("123123");
+            if (!extension) {
+                alert("扩展未正确加载，请刷新页面重试");
+                return;
+            }
+
+            const settings = extension.getSettings();
+
+            // 1. 基础配置更新
+            settings.enabled = document.getElementById("123123_enabled").checked;
+            settings.enableFixedMode = document.getElementById("123123_mode_fixed").checked;
+            settings.enableRandomMode = document.getElementById("123123_mode_interval").checked;
+
+            // 2. 间隔模式配置更新
+            settings.minRandomInterval = parseInt(document.getElementById("123123_interval_min").value) || 60;
+            settings.maxRandomInterval = parseInt(document.getElementById("123123_interval_max").value) || 300;
+
+            // 3. 提示词更新
+            settings.prompts = document.getElementById("123123_prompts").value
+                .split("\n")
+                .map(p => p.trim())
+                .filter(p => p);
+
+            // 4. 定时模式：更新时间点列表
+            const timePoints = Array.from(document.querySelectorAll(".time_point")).map(el => ({
+                hour: parseInt(el.querySelector(".hour").value) || 0,
+                minute: parseInt(el.querySelector(".minute").value) || 0
+            }));
+            settings.fixedTimes = timePoints;
+
+            // 5. 验证配置合法性
+            const errors = [];
+            if (settings.enableRandomMode && settings.minRandomInterval > settings.maxRandomInterval) {
+                errors.push("最小间隔不能大于最大间隔");
+            }
+            if (settings.prompts.length === 0) {
+                errors.push("提示词不能为空，请至少输入一条");
+            }
+            if (settings.enableFixedMode && settings.fixedTimes.length === 0) {
+                errors.push("定时模式需添加至少一个时间点");
+            }
+
+            // 验证失败：显示错误信息
+            if (errors.length > 0) {
+                alert("保存失败：\n" + errors.join("\n"));
+                return;
+            }
+
+            // 6. 保存配置
+            extension.updateFromUI();
+            alert("设置已保存");
+        });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener("DOMContentLoaded", () => {
+        populateUIFromSettings();
+        initializeEventListeners();
     });
-
-    // 绑定删除按钮事件
-    document.querySelectorAll(".delete_time").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        // 通过扩展实例获取配置并修改
-        const extension = window.extensions.getExtension("123123");
-        if (extension) {
-          const settings = extension.getSettings();
-          settings.fixedTimes.splice(e.target.dataset.index, 1); // 删除对应时间点
-          renderFixedTimePoints(settings.fixedTimes); // 重新渲染
-        }
-      });
-    });
-  }
-
-  // 切换配置块显示/隐藏（根据选中的模式）
-  function toggleSettingsVisibility() {
-    const isIdleMode = document.getElementById("123123_mode_idle").checked;
-    const isFixedMode = document.getElementById("123123_mode_fixed").checked;
-    const isIntervalMode = document.getElementById("123123_mode_interval").checked;
-
-    // 显示当前模式对应的配置块，隐藏其他
-    document.getElementById("123123_idle_settings").style.display = isIdleMode ? "block" : "none";
-    document.getElementById("123123_fixed_settings").style.display = isFixedMode ? "block" : "none";
-    document.getElementById("123123_interval_settings").style.display = isIntervalMode ? "block" : "none";
-  }
-
-  // 绑定模式切换事件（确保互斥：选中一个模式时，其他模式自动取消）
-  function bindModeToggleEvents() {
-    const modeInputs = [
-      document.getElementById("123123_mode_idle"),
-      document.getElementById("123123_mode_fixed"),
-      document.getElementById("123123_mode_interval")
-    ];
-
-    modeInputs.forEach(input => {
-      input.addEventListener("change", (e) => {
-        if (e.target.checked) {
-          // 取消其他模式的选中状态
-          modeInputs.forEach(other => {
-            if (other !== e.target) other.checked = false;
-          });
-          toggleSettingsVisibility(); // 更新配置块显示
-        }
-      });
-    });
-  }
-
-  // 绑定添加时间点事件
-  function bindAddTimePointEvent() {
-    document.getElementById("123123_add_fixed_time").addEventListener("click", () => {
-      const extension = window.extensions.getExtension("123123");
-      if (extension) {
-        const settings = extension.getSettings();
-        // 默认添加中午12点
-        settings.fixedTimes.push({ hour: 12, minute: 0 });
-        renderFixedTimePoints(settings.fixedTimes);
-      }
-    });
-  }
-
-  // 绑定保存设置事件（关键修改：通过扩展实例更新配置）
-  function bindSaveSettingsEvent() {
-    document.getElementById("123123_save_settings").addEventListener("click", () => {
-      const extension = window.extensions.getExtension("123123");
-      if (!extension) {
-        alert("扩展未加载，请刷新页面重试");
-        return;
-      }
-
-      const settings = extension.getSettings();
-
-      // 1. 基础配置更新
-      settings.enabled = document.getElementById("123123_enabled").checked;
-      settings.idleTimer = parseInt(document.getElementById("123123_timer").value) || 300;
-      settings.random = document.getElementById("123123_random").checked;
-      settings.maxUses = parseInt(document.getElementById("123123_max_uses").value) || 0;
-      settings.prompts = document.getElementById("123123_prompts").value
-        .split("\n")
-        .map(p => p.trim())
-        .filter(p => p); // 过滤空行
-
-      // 2. 模式配置更新（互斥逻辑）
-      settings.enableFixedMode = document.getElementById("123123_mode_fixed").checked;
-      settings.enableRandomMode = document.getElementById("123123_mode_interval").checked;
-
-      // 3. 定时模式：更新时间点列表
-      const timePoints = Array.from(document.querySelectorAll(".time_point")).map(el => ({
-        hour: parseInt(el.querySelector(".hour").value) || 0,
-        minute: parseInt(el.querySelector(".minute").value) || 0
-      }));
-      settings.fixedTimes = timePoints;
-
-      // 4. 间隔模式：更新间隔范围
-      settings.minRandomInterval = parseInt(document.getElementById("123123_interval_min").value) || 60;
-      settings.maxRandomInterval = parseInt(document.getElementById("123123_interval_max").value) || 300;
-
-      // 5. 验证配置合法性
-      const errors = [];
-      if (settings.enableRandomMode && settings.minRandomInterval > settings.maxRandomInterval) {
-        errors.push("最小间隔不能大于最大间隔");
-      }
-      if (settings.prompts.length === 0) {
-        errors.push("提示词不能为空，请至少输入一条");
-      }
-      if (settings.enableFixedMode && settings.fixedTimes.length === 0) {
-        errors.push("定时模式需添加至少一个时间点");
-      }
-
-      // 验证失败：显示错误信息
-      if (errors.length > 0) {
-        alert("配置错误：\n" + errors.join("\n"));
-        return;
-      }
-
-      // 6. 调用扩展实例的updateFromUI方法，通知核心逻辑更新（关键修改）
-      extension.updateFromUI();
-      alert("设置已保存");
-    });
-  }
-
-  // 初始化所有事件绑定
-  function initEvents() {
-    bindModeToggleEvents();
-    bindAddTimePointEvent();
-    bindSaveSettingsEvent();
-  }
-
-  // 页面加载完成后初始化
-  (function() {
-    // 等待扩展系统初始化完成（兼容官方加载时序）
-    const checkExtensionLoaded = setInterval(() => {
-      if (window.extensions?.getExtension("123123")) {
-        populateUIFromSettings(); // 加载配置到UI
-        initEvents(); // 绑定所有交互事件
-        clearInterval(checkExtensionLoaded);
-      }
-    }, 100); // 每100ms检查一次，最多等待5秒
-    setTimeout(() => clearInterval(checkExtensionLoaded), 5000);
-  })();
 </script>
-
-<style>
-  /* 基础样式保持与扩展风格一致 */
-  #123123_container {
-    --border-color: #2c2c2c;
-    --bg-color: #141414;
-    --card-bg: #1a1a1a;
-    --text-color: #e8e8e8;
-    --muted-color: #bdbdbd;
-    font-size: 13px;
-    color: var(--text-color);
-    max-width: 550px;
-  }
-
-  .auto_block {
-    margin: 8px 0;
-    padding: 10px;
-    border-radius: 4px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-  }
-
-  .sub_block {
-    margin-left: 16px;
-    margin-top: 6px;
-  }
-
-  .checkbox-container {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin: 4px 0;
-    cursor: pointer;
-  }
-
-  .checkbox-container input {
-    width: 14px;
-    height: 14px;
-    accent-color: #4d90fe;
-  }
-
-  label {
-    display: block;
-    margin: 6px 0 2px;
-  }
-
-  input[type="number"], textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 5px 8px;
-    margin: 4px 0 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-    background: var(--bg-color);
-    color: var(--text-color);
-    font-size: 12px;
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
-
-  .auto_btn {
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 3px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-    margin: 4px 0;
-  }
-
-  .auto_btn:hover {
-    background: #2a2a2a;
-  }
-
-  .time_points {
-    margin: 8px 0;
-    gap: 6px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .time_point {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .time_input {
-    width: 60px !important;
-    display: inline-block;
-    margin-right: 4px;
-  }
-
-  .empty-hint {
-    color: var(--muted-color);
-    font-size: 12px;
-    padding: 8px 0;
-    font-style: italic;
-  }
-
-  small {
-    color: var(--muted-color);
-    font-size: 11px;
-    display: block;
-    margin-top: 4px;
-  }
-</style>
