@@ -1,209 +1,221 @@
-// 扩展配置（完全遵循官方命名规范）
-const defaultSettings = {
-  enabled: true,
-  // 官方原有闲置配置
-  timer: 300, // 基础闲置时间（秒）
-  random: false, // 官方随机闲置（±30%）
-  maxUses: 5, // 最大触发次数
-  // 新增：定时模式配置
-  fixedMode: {
-    enabled: false,
-    times: [{ hour: 8, minute: 30 }, { hour: 18, minute: 0 }] // 每日时间点
-  },
-  // 新增：随机间隔模式配置
-  intervalMode: {
-    enabled: false,
-    min: 60, // 最小间隔（秒）
-    max: 300 // 最大间隔（秒）
-  },
-  // 官方提示词配置
-  prompts: [
-    "我们继续聊刚才的话题吧？",
-    "有什么新想法吗？",
-    "你觉得接下来会发生什么？"
-  ],
-  // 官方动作配置（复用）
-  action: "continue",
-  sender: "ai",
-  cooldown: 60
+// 扩展配置（遵循官方扩展变量规范）
+const extensionSettings = {
+  autoAiMessage: {
+    enabled: true,
+    enableFixedMode: true,
+    enableRandomMode: false,
+    fixedTimes: [{ hour: 8, minute: 30 }, { hour: 18, minute: 0 }],
+    minRandomInterval: 10,
+    maxRandomInterval: 60,
+    minMessageGap: 5,
+    onlyWhenIdle: true,
+    prompts: [
+      "基于之前的对话，自然地继续交流吧。",
+      "有什么想聊的吗？我很乐意继续。",
+      "接着刚才的话题，你觉得呢？"
+    ]
+  }
 };
 
-let extensionSettings = { ...defaultSettings };
-let idleTimer = null;
-let fixedTimer = null;
-let intervalTimer = null;
-let useCount = 0;
-let lastActivity = Date.now();
+// 定时器与状态变量
+let fixedModeTimer = null;
+let randomModeTimer = null;
+let lastAutoMessageTime = 0;
+let lastUserInputTime = Date.now();
 
-// 初始化（官方标准入口）
+// 初始化扩展（官方规范：使用setup函数）
 function setup() {
+  // 加载保存的配置（存储键改为123123，与id一致）
   loadSettings();
-  registerListeners();
-  resetAllTimers();
+  // 注册事件监听
+  registerEventListeners();
+  // 启动模式
+  startAllModes();
 }
 
-// 加载配置（复用官方存储方式）
+// 加载本地配置（存储键从auto-ai-message改为123123）
 function loadSettings() {
-  const saved = window.app.storage.get("my-auto-ai-message");
-  if (saved) extensionSettings = { ...defaultSettings, ...saved };
+  const saved = window.extensions.getStorage("123123"); // 关键修改：与id一致
+  if (saved) {
+    extensionSettings.autoAiMessage = { ...extensionSettings.autoAiMessage, ...saved };
+  }
 }
 
-// 保存配置（官方规范）
+// 保存配置（存储键从auto-ai-message改为123123）
 function saveSettings() {
-  window.app.storage.set("idleAutoMessage", extensionSettings);
+  window.extensions.setStorage("123123", extensionSettings.autoAiMessage); // 关键修改：与id一致
 }
 
-// 注册事件（官方标准监听）
-function registerListeners() {
-  // 监听用户活动（官方方式）
-  document.addEventListener("keydown", resetActivity);
-  document.addEventListener("click", resetActivity);
-  document.addEventListener("touchstart", resetActivity);
+// 注册事件监听（用户输入/对话变化）
+function registerEventListeners() {
+  // 监听用户输入（键盘+触摸）
+  document.addEventListener('input', updateLastUserInput);
+  document.addEventListener('touchend', updateLastUserInput);
+  
   // 监听对话切换
-  window.app.conversations.on("change", resetAllTimers);
+  window.conversations.on('conversation_changed', () => {
+    stopAllModes();
+    startAllModes();
+  });
 }
 
-// 重置用户活动时间（官方逻辑）
-function resetActivity() {
-  lastActivity = Date.now();
-  useCount = 0;
-  resetAllTimers();
+// 更新用户输入时间
+function updateLastUserInput() {
+  lastUserInputTime = Date.now();
 }
 
-// 重置所有定时器（整合官方+新增逻辑）
-function resetAllTimers() {
-  if (idleTimer) clearTimeout(idleTimer);
-  if (fixedTimer) clearTimeout(fixedTimer);
-  if (intervalTimer) clearTimeout(intervalTimer);
-
-  if (!extensionSettings.enabled) return;
-
-  // 启动官方闲置模式
-  startIdleMode();
-  // 启动新增定时模式
-  if (extensionSettings.fixedMode.enabled) startFixedMode();
-  // 启动新增随机间隔模式
-  if (extensionSettings.intervalMode.enabled) startIntervalMode();
+// 启动所有模式
+function startAllModes() {
+  const config = extensionSettings.autoAiMessage;
+  if (!config.enabled) return;
+  
+  if (config.enableFixedMode && config.fixedTimes.length > 0) {
+    startFixedMode();
+  }
+  if (config.enableRandomMode) {
+    startRandomMode();
+  }
 }
 
-// 官方闲置模式（原逻辑保留）
-function startIdleMode() {
-  const baseTime = extensionSettings.timer * 1000;
-  const randomOffset = extensionSettings.random ? (Math.random() * baseTime * 0.6 - baseTime * 0.3) : 0;
-  const delay = baseTime + randomOffset;
-
-  idleTimer = setTimeout(async () => {
-    if (canSendMessage() && (Date.now() - lastActivity) >= baseTime) {
-      await sendIdleMessage();
-    }
-    startIdleMode(); // 循环
-  }, delay);
+// 停止所有模式
+function stopAllModes() {
+  if (fixedModeTimer) clearTimeout(fixedModeTimer);
+  if (randomModeTimer) clearTimeout(randomModeTimer);
+  fixedModeTimer = randomModeTimer = null;
 }
 
-// 新增：定时模式（每日固定时间点）
+// 定时模式（时间点触发）
 function startFixedMode() {
+  if (fixedModeTimer) clearTimeout(fixedModeTimer);
+  
   const nextTime = getNextFixedTime();
   if (!nextTime) {
-    fixedTimer = setTimeout(startFixedMode, 60000); // 1分钟后重试
+    fixedModeTimer = setTimeout(startFixedMode, 10000);
     return;
   }
-
+  
   const delay = nextTime - Date.now();
-  fixedTimer = setTimeout(async () => {
-    if (canSendMessage()) await sendIdleMessage();
-    startFixedMode(); // 循环
+  fixedModeTimer = setTimeout(async () => {
+    await trySendAutoMessage("fixed");
+    startFixedMode();
   }, delay);
 }
 
 // 计算下一个定时时间点
 function getNextFixedTime() {
+  const config = extensionSettings.autoAiMessage;
+  if (!config.fixedTimes || config.fixedTimes.length === 0) return null;
+  
   const now = new Date();
-  const currentMinute = now.getHours() * 60 + now.getMinutes();
-
-  // 筛选有效时间点
-  const validTimes = extensionSettings.fixedMode.times
+  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+  
+  const sortedTimes = [...config.fixedTimes]
     .map(t => ({ ...t, total: t.hour * 60 + t.minute }))
-    .filter(t => t.total >= 0 && t.total < 1440); // 0-23:59
-
-  if (validTimes.length === 0) return null;
-
-  // 查找当天或次日的时间点
-  for (const time of validTimes) {
-    if (time.total > currentMinute) {
+    .sort((a, b) => a.total - b.total);
+  
+  for (const time of sortedTimes) {
+    if (time.total > currentTotalMinutes) {
       const next = new Date();
       next.setHours(time.hour, time.minute, 0, 0);
       return next.getTime();
     }
   }
-
+  
   // 次日第一个时间点
-  const firstTime = validTimes.sort((a, b) => a.total - b.total)[0];
+  const first = sortedTimes[0];
   const next = new Date();
   next.setDate(next.getDate() + 1);
-  next.setHours(firstTime.hour, firstTime.minute, 0, 0);
+  next.setHours(first.hour, first.minute, 0, 0);
   return next.getTime();
 }
 
-// 新增：随机间隔模式
-function startIntervalMode() {
-  const { min, max } = extensionSettings.intervalMode;
-  const delay = (Math.random() * (max - min) + min) * 1000;
-
-  intervalTimer = setTimeout(async () => {
-    if (canSendMessage()) await sendIdleMessage();
-    startIntervalMode(); // 循环
-  }, delay);
+// 随机模式
+function startRandomMode() {
+  if (randomModeTimer) clearTimeout(randomModeTimer);
+  
+  const run = async () => {
+    const config = extensionSettings.autoAiMessage;
+    if (!config.enabled || !config.enableRandomMode) return;
+    
+    await trySendAutoMessage("random");
+    
+    const delay = Math.floor(
+      Math.random() * (config.maxRandomInterval - config.minRandomInterval + 1)
+      + config.minRandomInterval
+    ) * 1000;
+    
+    randomModeTimer = setTimeout(run, delay);
+  };
+  
+  run();
 }
 
-// 检查是否可以发送消息（整合官方条件）
-function canSendMessage() {
-  if (!extensionSettings.enabled) return false;
-  if (useCount >= extensionSettings.maxUses && extensionSettings.maxUses > 0) return false;
-  if (window.app.conversations.getCurrent()?.messages.length === 0) return false; // 空对话不发送
-  return true;
+// 尝试发送消息（检查条件）
+async function trySendAutoMessage(mode) {
+  const config = extensionSettings.autoAiMessage;
+  const now = Date.now();
+  const nowSeconds = now / 1000;
+  
+  // 最小间隔检查
+  if ((nowSeconds - lastAutoMessageTime) < config.minMessageGap) return;
+  
+  // 闲置检查
+  const idleThreshold = mode === "fixed" ? 1800 : config.maxRandomInterval;
+  const isIdle = (nowSeconds - (lastUserInputTime / 1000)) >= idleThreshold;
+  if (config.onlyWhenIdle && !isIdle) return;
+  
+  // 发送消息
+  const success = await sendAutoMessage();
+  if (success) lastAutoMessageTime = nowSeconds;
 }
 
-// 发送消息（复用官方发送逻辑）
-async function sendIdleMessage() {
-  useCount++;
-  const conversation = window.app.conversations.getCurrent();
-  if (!conversation) return;
-
-  // 随机选择提示词
-  const prompt = extensionSettings.prompts[Math.floor(Math.random() * extensionSettings.prompts.length)];
-
-  // 调用官方AI生成
-  const response = await window.app.ai.generate({
-    prompt: prompt,
-    context: conversation.messages,
-    model: conversation.model,
-    parameters: conversation.parameters
-  });
-
-  if (response.text) {
-    // 官方方式添加消息
-    window.app.conversations.addMessage({
-      sender: extensionSettings.sender,
-      text: response.text,
-      timestamp: new Date().toISOString()
+// 发送AI消息（使用官方API）
+async function sendAutoMessage() {
+  try {
+    const conversation = window.conversations.getCurrent();
+    if (!conversation) return false;
+    
+    // 随机选择提示词
+    const prompts = extensionSettings.autoAiMessage.prompts;
+    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    
+    const response = await window.ai.generate({
+      prompt: randomPrompt,
+      context: conversation.messages,
+      model: conversation.model,
+      parameters: conversation.parameters
     });
-    window.app.ui.refreshMessages();
+    
+    if (response?.text) {
+      window.conversations.addMessage({
+        sender: "ai",
+        text: response.text,
+        timestamp: new Date().toISOString()
+      });
+      window.ui.refreshMessages();
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Auto AI Message Error:", error);
+    return false;
   }
 }
 
-// 同步UI配置（官方规范）
-function updateSettingsFromUI() {
+// 同步UI配置到扩展（官方规范：设置界面回调）
+function updateFromUI() {
+  // 从dropdown.html同步配置（具体实现见UI部分）
   saveSettings();
-  resetAllTimers();
+  stopAllModes();
+  startAllModes();
 }
 
-// 暴露扩展接口（官方标准）
-window.idleAutoMessage = {
+// 暴露扩展接口（官方规范，接口名可保持不变）
+window.autoAiMessage = {
   setup,
-  updateSettingsFromUI,
-  getSettings: () => ({ ...extensionSettings }),
-  defaultSettings
+  updateFromUI,
+  getSettings: () => extensionSettings.autoAiMessage
 };
 
 // 初始化
-document.addEventListener("DOMContentLoaded", setup);
+document.addEventListener('DOMContentLoaded', setup);
