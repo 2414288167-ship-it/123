@@ -1,15 +1,9 @@
 {
-  "id": "my-auto-ai-message",  // 新的唯一标识
-  "name": "我的AI自动消息",    // 显示名称也可以同步修改
-  "version": "1.0.0",
-  "description": "支持定时和随机发送AI自动消息",
-  "author": "Your Name",
-  "main": "index.js",       // 指向实际存在的文件
+  "id": "my-auto-ai-message",
+  "name": "测试扩展",
+  "main": "index.js",
   "ui": "dropdown.html",
-  "style": "style.css",
-  "permissions": ["conversations", "ai", "ui", "storage"],  // 必要权限
   "compatibility": {
-    "minimum": "1.10.0",    // 与你的SillyTavern版本匹配
-    "tested": "1.12.0"
+    "minimum": "1.10.0"
   }
 }
