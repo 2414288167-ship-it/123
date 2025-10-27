@@ -1,12 +1,11 @@
 {
     "display_name": "123123",
-    "loading_order": 5,
+    "loading_order": 10,
     "requires": [],
-    "optional": [
-    ],
+    "optional": [],
     "js": "index.js",
     "css": "style.css",
     "author": "2414288167-ship-it",
-    "version": "1.0.0",
-    "homePage": "https://github.com/SillyTavern/SillyTavern"
+    "version": "1.3.0",  // 与JS中版本一致
+    "homePage": "https://github.com/2414288167-ship-it/123123"  // 改为实际仓库地址
 }
