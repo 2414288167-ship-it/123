@@ -44,7 +44,7 @@ function setup() {
 
 // 加载配置（复用官方存储方式）
 function loadSettings() {
-  const saved = window.app.storage.get("idleAutoMessage");
+  const saved = window.app.storage.get("my-auto-ai-message");
   if (saved) extensionSettings = { ...defaultSettings, ...saved };
 }
 
