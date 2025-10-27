@@ -1,22 +1,22 @@
-/* 官方扩展通用样式变量 */
-#idle_container {
-  --idle-border: 1px solid var(--grey-3, #2c2c2c);
-  --idle-bg: var(--black-2, #141414);
-  --idle-card-bg: var(--black-1, #1a1a1a);
-  --idle-text: var(--text-1, #e8e8e8);
-  --idle-muted: var(--text-2, #bdbdbd);
+/* 样式变量保持与官方一致 */
+#auto_message_container { /* 容器ID与HTML同步 */
+  --auto-border: 1px solid var(--grey-3, #2c2c2c); /* 变量前缀修改 */
+  --auto-bg: var(--black-2, #141414);
+  --auto-card-bg: var(--black-1, #1a1a1a);
+  --auto-text: var(--text-1, #e8e8e8);
+  --auto-muted: var(--text-2, #bdbdbd);
 
-  color: var(--idle-text);
+  color: var(--auto-text);
   font-size: 13px;
   max-width: 560px;
 }
 
-/* 块级元素 */
-.idle_block {
+/* 块级元素（类名与HTML同步） */
+.auto_block {
   margin: 8px 0;
   padding: 6px;
   border-radius: 4px;
-  background: var(--idle-card-bg);
+  background: var(--auto-card-bg);
 }
 
 .sub_block {
@@ -39,18 +39,18 @@
   accent-color: var(--accent);
 }
 
-/* 输入框 */
-#idle_container input[type="number"],
-#idle_container textarea,
+/* 输入框（选择器与HTML同步） */
+#auto_message_container input[type="number"],
+#auto_message_container textarea,
 .time_input {
   width: 100%;
   box-sizing: border-box;
   padding: 4px 6px;
   margin: 4px 0;
-  border: var(--idle-border);
+  border: var(--auto-border);
   border-radius: 4px;
-  background: var(--idle-bg);
-  color: var(--idle-text);
+  background: var(--auto-bg);
+  color: var(--auto-text);
   font-size: 12px;
 }
 
@@ -67,11 +67,11 @@
   margin: 4px 0;
 }
 
-/* 按钮 */
-.idle_btn {
-  background: var(--idle-bg);
-  border: var(--idle-border);
-  color: var(--idle-text);
+/* 按钮（类名与HTML同步） */
+.auto_btn {
+  background: var(--auto-bg);
+  border: var(--auto-border);
+  color: var(--auto-text);
   padding: 2px 6px;
   border-radius: 3px;
   cursor: pointer;
@@ -79,13 +79,13 @@
   margin: 2px 0;
 }
 
-.idle_btn:hover {
+.auto_btn:hover {
   filter: brightness(1.2);
 }
 
 /* 说明文字 */
-#idle_container small {
-  color: var(--idle-muted);
+#auto_message_container small {
+  color: var(--auto-muted);
   font-size: 11px;
   margin-top: 2px;
   display: block;
