@@ -1,19 +1,19 @@
-<div id="idle_container">
-  <!-- 基础开关（保持官方样式） -->
-  <div class="idle_block">
+<div id="auto_message_container"> <!-- 容器ID修改，避免与其他扩展冲突 -->
+  <!-- 基础开关 -->
+  <div class="auto_block"> <!-- 类名前缀修改 -->
     <label class="checkbox-container">
-      <input type="checkbox" id="idle_enabled" checked>
+      <input type="checkbox" id="auto_enabled" checked> <!-- 元素ID前缀修改 -->
       <span class="checkmark"></span> 启用自动消息
     </label>
   </div>
 
-  <!-- 模式选择（新增） -->
-  <div class="idle_block">
+  <!-- 模式选择 -->
+  <div class="auto_block">
     <label>触发模式：</label>
     <div class="sub_block">
       <label class="checkbox-container">
         <input type="checkbox" id="mode_idle" checked>
-        <span class="checkmark"></span> 闲置触发（官方默认）
+        <span class="checkmark"></span> 闲置触发
       </label>
       <label class="checkbox-container">
         <input type="checkbox" id="mode_fixed">
@@ -26,27 +26,27 @@
     </div>
   </div>
 
-  <!-- 官方闲置模式配置（保留） -->
-  <div class="idle_block" id="idle_settings">
-    <label for="idle_timer">闲置时间（秒）：</label>
-    <input type="number" id="idle_timer" min="10" value="300">
+  <!-- 闲置模式配置 -->
+  <div class="auto_block" id="idle_settings">
+    <label for="auto_timer">闲置时间（秒）：</label> <!-- 关联ID修改 -->
+    <input type="number" id="auto_timer" min="10" value="300"> <!-- 元素ID修改 -->
     
     <label class="checkbox-container">
-      <input type="checkbox" id="idle_random">
+      <input type="checkbox" id="auto_random"> <!-- 元素ID修改 -->
       <span class="checkmark"></span> 随机波动（±30%）
     </label>
   </div>
 
-  <!-- 新增：定时模式配置 -->
-  <div class="idle_block" id="fixed_settings" style="display: none;">
+  <!-- 定时模式配置 -->
+  <div class="auto_block" id="fixed_settings" style="display: none;">
     <label>每日发送时间点：</label>
     <div class="time_points" id="fixed_time_points"></div>
-    <button class="idle_btn" id="add_fixed_time">+ 添加时间点</button>
+    <button class="auto_btn" id="add_fixed_time">+ 添加时间点</button> <!-- 类名修改 -->
     <small>格式：小时（0-23）:分钟（0-59）</small>
   </div>
 
-  <!-- 新增：间隔模式配置 -->
-  <div class="idle_block" id="interval_settings" style="display: none;">
+  <!-- 间隔模式配置 -->
+  <div class="auto_block" id="interval_settings" style="display: none;">
     <label for="interval_min">最小间隔（秒）：</label>
     <input type="number" id="interval_min" min="10" value="60">
     
@@ -54,48 +54,48 @@
     <input type="number" id="interval_max" min="10" value="300">
   </div>
 
-  <!-- 官方通用配置（保留） -->
-  <div class="idle_block">
-    <label for="idle_max_uses">最大触发次数（0=无限制）：</label>
-    <input type="number" id="idle_max_uses" min="0" value="5">
+  <!-- 通用配置 -->
+  <div class="auto_block">
+    <label for="auto_max_uses">最大触发次数（0=无限制）：</label> <!-- 关联ID修改 -->
+    <input type="number" id="auto_max_uses" min="0" value="5"> <!-- 元素ID修改 -->
     
-    <label for="idle_prompts">提示词（每行一个）：</label>
-    <textarea id="idle_prompts" rows="3">我们继续聊刚才的话题吧？
+    <label for="auto_prompts">提示词（每行一个）：</label> <!-- 关联ID修改 -->
+    <textarea id="auto_prompts" rows="3">我们继续聊刚才的话题吧？
 有什么新想法吗？
-你觉得接下来会发生什么？</textarea>
+你觉得接下来会发生什么？</textarea> <!-- 元素ID修改 -->
   </div>
 
-  <!-- 保存按钮（官方风格） -->
-  <div class="idle_block">
-    <button class="idle_btn" id="save_idle_settings">保存设置</button>
+  <!-- 保存按钮 -->
+  <div class="auto_block">
+    <button class="auto_btn" id="save_auto_settings">保存设置</button> <!-- 类名和ID修改 -->
   </div>
 </div>
 
 <script>
-  // 加载配置到UI（官方方式）
+  // 加载配置到UI（接口名称与JS保持一致）
   function populateUIFromSettings() {
-    const settings = window.idleAutoMessage.getSettings();
+    const settings = window.autoAiMessage.getSettings(); // 接口名修改为autoAiMessage
     
     // 基础开关
-    document.getElementById("idle_enabled").checked = settings.enabled;
+    document.getElementById("auto_enabled").checked = settings.enabled; // ID关联修改
     
     // 模式选择
-    document.getElementById("mode_idle").checked = !settings.fixedMode.enabled && !settings.intervalMode.enabled;
-    document.getElementById("mode_fixed").checked = settings.fixedMode.enabled;
-    document.getElementById("mode_interval").checked = settings.intervalMode.enabled;
+    document.getElementById("mode_idle").checked = !settings.enableFixedMode && !settings.enableRandomMode; // 适配JS配置字段
+    document.getElementById("mode_fixed").checked = settings.enableFixedMode;
+    document.getElementById("mode_interval").checked = settings.enableRandomMode;
     
-    // 官方闲置配置
-    document.getElementById("idle_timer").value = settings.timer;
-    document.getElementById("idle_random").checked = settings.random;
-    document.getElementById("idle_max_uses").value = settings.maxUses;
-    document.getElementById("idle_prompts").value = settings.prompts.join("\n");
+    // 闲置配置
+    document.getElementById("auto_timer").value = settings.idleTimer || 300; // 适配JS字段
+    document.getElementById("auto_random").checked = settings.random || false;
+    document.getElementById("auto_max_uses").value = settings.maxUses || 5;
+    document.getElementById("auto_prompts").value = settings.prompts?.join("\n") || "";
     
     // 定时模式配置
-    renderFixedTimePoints(settings.fixedMode.times);
+    renderFixedTimePoints(settings.fixedTimes || []); // 适配JS字段
     
     // 间隔模式配置
-    document.getElementById("interval_min").value = settings.intervalMode.min;
-    document.getElementById("interval_max").value = settings.intervalMode.max;
+    document.getElementById("interval_min").value = settings.minRandomInterval || 60;
+    document.getElementById("interval_max").value = settings.maxRandomInterval || 300;
     
     // 显示/隐藏配置块
     toggleSettingsVisibility();
@@ -113,7 +113,7 @@
         <input type="number" class="time_input hour" min="0" max="23" value="${time.hour || 0}">
         <span>:</span>
         <input type="number" class="time_input minute" min="0" max="59" value="${time.minute || 0}">
-        <button class="idle_btn delete_time" data-index="${index}">删除</button>
+        <button class="auto_btn delete_time" data-index="${index}">删除</button> <!-- 类名修改 -->
       `;
       container.appendChild(div);
     });
@@ -121,9 +121,9 @@
     // 绑定删除事件
     document.querySelectorAll(".delete_time").forEach(btn => {
       btn.addEventListener("click", (e) => {
-        const settings = window.idleAutoMessage.getSettings();
-        settings.fixedMode.times.splice(e.target.dataset.index, 1);
-        renderFixedTimePoints(settings.fixedMode.times);
+        const settings = window.autoAiMessage.getSettings(); // 接口名修改
+        settings.fixedTimes.splice(e.target.dataset.index, 1);
+        renderFixedTimePoints(settings.fixedTimes);
       });
     });
   }
@@ -146,46 +146,45 @@
 
   // 添加时间点
   document.getElementById("add_fixed_time").addEventListener("click", () => {
-    const settings = window.idleAutoMessage.getSettings();
-    settings.fixedMode.times.push({ hour: 12, minute: 0 });
-    renderFixedTimePoints(settings.fixedMode.times);
+    const settings = window.autoAiMessage.getSettings(); // 接口名修改
+    settings.fixedTimes.push({ hour: 12, minute: 0 });
+    renderFixedTimePoints(settings.fixedTimes);
   });
 
   // 保存设置
-  document.getElementById("save_idle_settings").addEventListener("click", () => {
-    const settings = window.idleAutoMessage.getSettings();
+  document.getElementById("save_auto_settings").addEventListener("click", () => {
+    const settings = window.autoAiMessage.getSettings(); // 接口名修改
     
     // 更新基础配置
-    settings.enabled = document.getElementById("idle_enabled").checked;
-    settings.timer = parseInt(document.getElementById("idle_timer").value);
-    settings.random = document.getElementById("idle_random").checked;
-    settings.maxUses = parseInt(document.getElementById("idle_max_uses").value);
-    settings.prompts = document.getElementById("idle_prompts").value.split("\n").filter(p => p.trim());
+    settings.enabled = document.getElementById("auto_enabled").checked;
+    settings.idleTimer = parseInt(document.getElementById("auto_timer").value);
+    settings.random = document.getElementById("auto_random").checked;
+    settings.maxUses = parseInt(document.getElementById("auto_max_uses").value);
+    settings.prompts = document.getElementById("auto_prompts").value.split("\n").filter(p => p.trim());
     
     // 更新模式配置
-    const useIdle = document.getElementById("mode_idle").checked;
-    settings.fixedMode.enabled = document.getElementById("mode_fixed").checked;
-    settings.intervalMode.enabled = document.getElementById("mode_interval").checked;
+    settings.enableFixedMode = document.getElementById("mode_fixed").checked;
+    settings.enableRandomMode = document.getElementById("mode_interval").checked;
     
     // 更新定时时间点
     const timePoints = Array.from(document.querySelectorAll(".time_point")).map(el => ({
       hour: parseInt(el.querySelector(".hour").value) || 0,
       minute: parseInt(el.querySelector(".minute").value) || 0
     }));
-    settings.fixedMode.times = timePoints;
+    settings.fixedTimes = timePoints;
     
     // 更新间隔配置
-    settings.intervalMode.min = parseInt(document.getElementById("interval_min").value);
-    settings.intervalMode.max = parseInt(document.getElementById("interval_max").value);
+    settings.minRandomInterval = parseInt(document.getElementById("interval_min").value);
+    settings.maxRandomInterval = parseInt(document.getElementById("interval_max").value);
     
     // 验证
-    if (settings.intervalMode.enabled && settings.intervalMode.min > settings.intervalMode.max) {
+    if (settings.enableRandomMode && settings.minRandomInterval > settings.maxRandomInterval) {
       alert("最小间隔不能大于最大间隔");
       return;
     }
     
-    // 保存并刷新
-    window.idleAutoMessage.updateSettingsFromUI();
+    // 保存并刷新（调用JS中暴露的方法）
+    window.autoAiMessage.updateFromUI(); // 方法名修改为updateFromUI
     alert("设置已保存");
   });
 
