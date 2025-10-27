@@ -1,16 +1,15 @@
 {
-  "id": "auto-ai-message",
-  "name": "auto-ai-message",
+  "id": "auto-ai-message",  // 与文件夹名一致
+  "name": "Auto AI Message",
   "version": "1.0.0",
+  "description": "支持定时和随机发送AI自动消息",
   "author": "Your Name",
-  "description": "用户闲置时自动发送消息（支持定时和随机模式）",
-  "main": "index.js",
+  "main": "index.js",       // 指向实际存在的文件
   "ui": "dropdown.html",
   "style": "style.css",
-  "order": 6,
-  "dependencies": [],
+  "permissions": ["conversations", "ai", "ui", "storage"],  // 必要权限
   "compatibility": {
-    "minimum": "1.10.0",
+    "minimum": "1.10.0",    // 与你的SillyTavern版本匹配
     "tested": "1.12.0"
   }
 }
