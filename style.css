@@ -1,4 +1,4 @@
-/* 继承官方扩展样式变量 */
+/* 官方扩展通用样式变量 */
 #idle_container {
   --idle-border: 1px solid var(--grey-3, #2c2c2c);
   --idle-bg: var(--black-2, #141414);
@@ -9,16 +9,22 @@
   color: var(--idle-text);
   font-size: 13px;
   max-width: 560px;
-  padding: 4px 0;
 }
 
-/* 块级元素样式 */
+/* 块级元素 */
 .idle_block {
-  margin: 6px 0;
-  padding: 4px 6px;
+  margin: 8px 0;
+  padding: 6px;
+  border-radius: 4px;
+  background: var(--idle-card-bg);
 }
 
-/* 复选框样式 */
+.sub_block {
+  margin-left: 16px;
+  margin-top: 4px;
+}
+
+/* 复选框 */
 .checkbox-container {
   display: inline-flex;
   align-items: center;
@@ -28,85 +34,59 @@
 }
 
 .checkbox-container input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent, #6d4aff);
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
 }
 
-/* 详情面板样式 */
-#idle_container details {
-  border: var(--idle-border);
-  border-radius: 6px;
-  margin: 6px 0;
-  background: var(--idle-card-bg);
-}
-
-#idle_container summary {
-  padding: 6px 8px;
-  cursor: pointer;
-  font-weight: 500;
-  background: var(--idle-bg);
-  border-radius: 6px 6px 0 0;
-}
-
-/* 输入框样式 */
+/* 输入框 */
 #idle_container input[type="number"],
 #idle_container textarea,
-.time-input {
+.time_input {
   width: 100%;
   box-sizing: border-box;
-  padding: 6px 8px;
+  padding: 4px 6px;
   margin: 4px 0;
   border: var(--idle-border);
   border-radius: 4px;
   background: var(--idle-bg);
   color: var(--idle-text);
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.time-input {
-  width: 60px;
+.time_input {
+  width: 50px;
   display: inline-block;
+  margin-right: 4px;
 }
 
-.time-point {
+.time_point {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   margin: 4px 0;
 }
 
-/* 按钮样式 */
+/* 按钮 */
 .idle_btn {
   background: var(--idle-bg);
   border: var(--idle-border);
   color: var(--idle-text);
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
   cursor: pointer;
   font-size: 12px;
   margin: 2px 0;
 }
 
 .idle_btn:hover {
-  filter: brightness(1.15);
+  filter: brightness(1.2);
 }
 
-/* 提示文本 */
+/* 说明文字 */
 #idle_container small {
   color: var(--idle-muted);
   font-size: 11px;
-  margin: 2px 0 4px 0;
+  margin-top: 2px;
   display: block;
-}
-
-/* 下次发送时间提示 */
-.idle-next-time {
-  margin: 8px 0;
-  padding: 6px 8px;
-  font-size: 12px;
-  color: var(--idle-muted);
-  background: var(--idle-card-bg);
-  border: var(--idle-border);
-  border-radius: 4px;
 }
