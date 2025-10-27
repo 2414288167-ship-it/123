@@ -1,92 +1,52 @@
-/* 样式变量保持与官方一致 */
-#auto_message_container { /* 容器ID与HTML同步 */
-  --auto-border: 1px solid var(--grey-3, #2c2c2c); /* 变量前缀修改 */
-  --auto-bg: var(--black-2, #141414);
-  --auto-card-bg: var(--black-1, #1a1a1a);
-  --auto-text: var(--text-1, #e8e8e8);
-  --auto-muted: var(--text-2, #bdbdbd);
-
-  color: var(--auto-text);
-  font-size: 13px;
-  max-width: 560px;
-}
-
-/* 块级元素（类名与HTML同步） */
 .auto_block {
-  margin: 8px 0;
-  padding: 6px;
-  border-radius: 4px;
-  background: var(--auto-card-bg);
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .sub_block {
-  margin-left: 16px;
-  margin-top: 4px;
+    margin-left: 20px;
 }
 
-/* 复选框 */
 .checkbox-container {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 4px 0;
-  cursor: pointer;
+    display: block;
+    margin: 5px 0;
 }
 
-.checkbox-container input {
-  width: 14px;
-  height: 14px;
-  accent-color: var(--accent);
-}
-
-/* 输入框（选择器与HTML同步） */
-#auto_message_container input[type="number"],
-#auto_message_container textarea,
-.time_input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 4px 6px;
-  margin: 4px 0;
-  border: var(--auto-border);
-  border-radius: 4px;
-  background: var(--auto-bg);
-  color: var(--auto-text);
-  font-size: 12px;
-}
-
-.time_input {
-  width: 50px;
-  display: inline-block;
-  margin-right: 4px;
+.time_points {
+    margin: 10px 0;
 }
 
 .time_point {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 4px 0;
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
 }
 
-/* 按钮（类名与HTML同步） */
+.time_input {
+    width: 50px;
+    margin: 0 5px;
+}
+
 .auto_btn {
-  background: var(--auto-bg);
-  border: var(--auto-border);
-  color: var(--auto-text);
-  padding: 2px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-  margin: 2px 0;
+    margin: 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
 }
 
 .auto_btn:hover {
-  filter: brightness(1.2);
+    background: #45a049;
 }
 
-/* 说明文字 */
-#auto_message_container small {
-  color: var(--auto-muted);
-  font-size: 11px;
-  margin-top: 2px;
-  display: block;
+.delete_time {
+    background: #f44336;
+}
+
+.delete_time:hover {
+    background: #da190b;
 }
