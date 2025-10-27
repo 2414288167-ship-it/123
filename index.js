@@ -269,19 +269,19 @@ function updateFromUI() {
 
 // 注册扩展到官方系统（核心：让SillyTavern识别插件）
 window.extensions.register({
-    id: EXTENSION_ID,
-    name: "Auto AI Message",  // 与manifest.json的name一致
-    setup: setup,  // 初始化函数
-    updateFromUI: updateFromUI,  // UI配置更新回调
-    getSettings: () => extension_settings[EXTENSION_ID],  // 提供配置获取方法
-    version: "1.3.0",  // 与manifest.json的version一致
-    author: "Your Name",
+    id: "123123", // 改为字符串形式
+    name: "Auto AI Message",  
+    setup: setup,  
+    updateFromUI: updateFromUI,  
+    getSettings: () => extension_settings[EXTENSION_ID],  
+    version: "1.3.0",  
+    author: "2414288167-ship-it",
     description: "AI自动发送消息（支持定时时间点和随机模式）"
 });
 
 // 兼容旧版本初始化（冗余保障）
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.extensions.isRegistered(EXTENSION_ID)) {
+    if (!window.extensions.isRegistered("123123")) { // 同步改为字符串
         setup();
     }
 });
