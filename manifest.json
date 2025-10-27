@@ -1,6 +1,6 @@
 {
-  "id": "auto-ai-message", // 正确：属性名用双引号
-  "name": "Auto AI Message",
+  "id": "my-auto-ai-message",  // 新的唯一标识
+  "name": "我的AI自动消息",    // 显示名称也可以同步修改
   "version": "1.0.0",
   "description": "支持定时和随机发送AI自动消息",
   "author": "Your Name",
